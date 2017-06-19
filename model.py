@@ -1,60 +1,55 @@
 import csv
 import cv2
 import numpy as np
+from random import shuffle
+from keras.layers import Conv2D, Flatten, MaxPooling2D, Dense, Dropout, Lambda, AveragePooling2D
+from keras.layers.convolutional import Cropping2D, Convolution2D
+from keras.layers.normalization import BatchNormalization
+
+
+images = []
+measurements = []
 
 lines = []
-with open('/Users/harshit.sharma/Downloads/driving_log.csv') as csvfile:
+with open('/Users/harshit.sharma/Downloads/lap_4/driving_log.csv') as csvfile:
   reader = csv.reader(csvfile)
   for line in reader:
     lines.append(line)
-images = []
-measurements = []
 for line in lines:
-  '''
-  center image
-  '''
+  #center image
   source_path = line[0]
   filename = source_path.split('/')[-1]
-  current_path = '/Users/harshit.sharma/Downloads/IMG/'+filename
+  current_path = '/Users/harshit.sharma/Downloads/lap_4/IMG/'+filename
   image = cv2.imread(current_path)
-  imgRGB = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+  #imgRGB = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+  imgRGB = cv2.cvtColor(image, cv2.COLOR_RGB2HLS)
   image = imgRGB
   crop_img = imgRGB[40:160,10:310,:]
   image = crop_img
-  images.append(image)
+  images.append(imgRGB)
   measurement = float(line[3])
   measurements.append(measurement)
 
-  correction = 0.1 # this is a parameter to tune
-  steering_left = measurement + correction
-  steering_right = measurement - correction
-  '''
-  left image
-
-  source_path = line[1]
-  filename = source_path.split('/')[-1]
-  current_path = '/Users/harshit.sharma/Downloads/IMG/'+filename
-  image = cv2.imread(current_path)
-  imgRGB = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-  image = imgRGB
-  images.append(image)
-  measurements.append(steering_left)
-  '''
-  '''
-  right image
-
-  source_path = line[2]
-  filename = source_path.split('/')[-1]
-  current_path = '/Users/harshit.sharma/Downloads/IMG/'+filename
-  image = cv2.imread(current_path)
-  imgRGB = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-  image = imgRGB
-  images.append(image)
-  measurements.append(steering_right)
-  '''
+indices = [i for i, x in enumerate(measurements) if x == float(0)]
+shuffle(indices)
+print(len(indices))
+perc_75 = 0.80*len(indices)
+to_remove = int(perc_75)
+indices = indices[:to_remove]
 
 augmented_images = []
 augmented_measurements = []
+
+final_images = []
+final_measurements = []
+
+for i in range(len(measurements)):
+    if i not in indices:
+        final_images.append(images[i])
+        final_measurements.append(measurements[i])
+
+measurements = final_measurements
+images = final_images
 
 for image,measurement in zip(images,measurements):
     augmented_images.append(image)
@@ -70,13 +65,23 @@ from keras.models import Sequential
 from keras.layers import Flatten, Dense, Lambda
 from keras.layers.convolutional import Convolution2D
 from keras.layers.pooling import MaxPooling2D
-
+input_shape = [160, 320, 3]
+#theta.crop_shape = ((80,20),(1,1))
+crop_shape= ((80,20),(1,1))
+#input_shape=(120,300,3)
 model = Sequential()
-model.add(Lambda(lambda x:x/255.0 - 0.5 , input_shape=(120,300,3)))
+#model.add(Lambda(lambda x:x/255.0 - 0.5 , input_shape=(120,300,3)))
+model.add(Cropping2D(crop_shape, input_shape=input_shape, name="Crop"))
+model.add(Lambda(lambda x:x/255.0 - 0.5 ))
+# Normalize input.
+#model.add(BatchNormalization(axis=1, name="Normalize"))
 model.add(Convolution2D(6,5,5,activation="relu"))
 model.add(MaxPooling2D())
 model.add(Convolution2D(6,5,5,activation="relu"))
 model.add(MaxPooling2D())
+model.add(Convolution2D(6,5,5,activation="relu"))
+model.add(MaxPooling2D())
+model.add(Dropout(0.05, name="Dropout"))
 model.add(Flatten())
 model.add(Dense(120))
 model.add(Dense(84))
@@ -84,4 +89,4 @@ model.add(Dense(1))
 
 model.compile(loss='mse',optimizer='adam')
 model.fit(X_train,y_train,validation_split=0.2,shuffle=True,nb_epoch=7)
-model.save('model.h5')
+model.save('modelwithaug_lap4.h5')

@@ -9,7 +9,81 @@ from keras.layers.normalization import BatchNormalization
 
 images = []
 measurements = []
+'''
+lines = []
+with open('/Users/harshit.sharma/Downloads/train_1/driving_log.csv') as csvfile:
+  reader = csv.reader(csvfile)
+  for line in reader:
+    lines.append(line)
+for line in lines:
+  #center image
+  source_path = line[0]
+  # left image
+  source_path_left = line[1]
+  # right image
+  source_path_right = line[2]
+  # adding center image
+  filename = source_path.split('/')[-1]
+  current_path = '/Users/harshit.sharma/Downloads/train_1/IMG/'+filename
+  image = cv2.imread(current_path)
+  imgRGB = cv2.cvtColor(image, cv2.COLOR_RGB2HLS)
+  images.append(imgRGB)
+  measurement = float(line[3])
+  measurements.append(measurement)
+  #adding left image
+  filename_left = source_path_left.split('/')[-1]
+  current_path_left = '/Users/harshit.sharma/Downloads/train_1/IMG/'+filename_left
+  image_left = cv2.imread(current_path_left)
+  imgRGB_left = cv2.cvtColor(image_left, cv2.COLOR_RGB2HLS)
+  images.append(imgRGB_left)
+  measurement = float(line[3]) + 0.2
+  measurements.append(measurement)
+  # adding right image
+  filename_right = source_path_right.split('/')[-1]
+  current_path_right = '/Users/harshit.sharma/Downloads/train_1/IMG/'+filename_right
+  image_right = cv2.imread(current_path_right)
+  imgRGB_right = cv2.cvtColor(image_right, cv2.COLOR_RGB2HLS)
+  images.append(imgRGB_right)
+  measurement = float(line[3]) - 0.2
+  measurements.append(measurement)
 
+lines = []
+with open('/Users/harshit.sharma/Downloads/train_2/driving_log.csv') as csvfile:
+  reader = csv.reader(csvfile)
+  for line in reader:
+    lines.append(line)
+for line in lines:
+  #center image
+  source_path = line[0]
+  # left image
+  source_path_left = line[1]
+  # right image
+  source_path_right = line[2]
+  # adding center image
+  filename = source_path.split('/')[-1]
+  current_path = '/Users/harshit.sharma/Downloads/train_2/IMG/'+filename
+  image = cv2.imread(current_path)
+  imgRGB = cv2.cvtColor(image, cv2.COLOR_RGB2HLS)
+  images.append(imgRGB)
+  measurement = float(line[3])
+  measurements.append(measurement)
+  #adding left image
+  filename_left = source_path_left.split('/')[-1]
+  current_path_left = '/Users/harshit.sharma/Downloads/train_2/IMG/'+filename_left
+  image_left = cv2.imread(current_path_left)
+  imgRGB_left = cv2.cvtColor(image_left, cv2.COLOR_RGB2HLS)
+  images.append(imgRGB_left)
+  measurement = float(line[3]) + 0.2
+  measurements.append(measurement)
+  # adding right image
+  filename_right = source_path_right.split('/')[-1]
+  current_path_right = '/Users/harshit.sharma/Downloads/train_2/IMG/'+filename_right
+  image_right = cv2.imread(current_path_right)
+  imgRGB_right = cv2.cvtColor(image_right, cv2.COLOR_RGB2HLS)
+  images.append(imgRGB_right)
+  measurement = float(line[3]) - 0.2
+  measurements.append(measurement)
+'''
 lines = []
 with open('/Users/harshit.sharma/Downloads/lap_4/driving_log.csv') as csvfile:
   reader = csv.reader(csvfile)
@@ -18,18 +92,67 @@ with open('/Users/harshit.sharma/Downloads/lap_4/driving_log.csv') as csvfile:
 for line in lines:
   #center image
   source_path = line[0]
+  # left image
+  source_path_left = line[1]
+  # right image
+  source_path_right = line[2]
+  # adding center image
   filename = source_path.split('/')[-1]
   current_path = '/Users/harshit.sharma/Downloads/lap_4/IMG/'+filename
   image = cv2.imread(current_path)
-  #imgRGB = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
   imgRGB = cv2.cvtColor(image, cv2.COLOR_RGB2HLS)
-  image = imgRGB
-  crop_img = imgRGB[40:160,10:310,:]
-  image = crop_img
+  images.append(imgRGB)
+  measurement = float(line[3])
+  measurements.append(measurement)
+  #adding left image
+  filename_left = source_path_left.split('/')[-1]
+  current_path_left = '/Users/harshit.sharma/Downloads/lap_4/IMG/'+filename_left
+  image_left = cv2.imread(current_path_left)
+  imgRGB_left = cv2.cvtColor(image_left, cv2.COLOR_RGB2HLS)
+  images.append(imgRGB_left)
+  measurement = float(line[3]) + 0.2
+  measurements.append(measurement)
+  # adding right image
+  filename_right = source_path_right.split('/')[-1]
+  current_path_right = '/Users/harshit.sharma/Downloads/lap_4/IMG/'+filename_right
+  image_right = cv2.imread(current_path_right)
+  imgRGB_right = cv2.cvtColor(image_right, cv2.COLOR_RGB2HLS)
+  images.append(imgRGB_right)
+  measurement = float(line[3]) - 0.2
+  measurements.append(measurement)
+'''
+lines = []
+with open('/Users/harshit.sharma/Downloads/train_1/driving_log.csv') as csvfile:
+  reader = csv.reader(csvfile)
+  for line in reader:
+    lines.append(line)
+for line in lines:
+  #center image
+  source_path = line[0]
+  filename = source_path.split('/')[-1]
+  current_path = '/Users/harshit.sharma/Downloads/train_1/IMG/'+filename
+  image = cv2.imread(current_path)
+  imgRGB = cv2.cvtColor(image, cv2.COLOR_RGB2HLS)
   images.append(imgRGB)
   measurement = float(line[3])
   measurements.append(measurement)
 
+lines = []
+with open('/Users/harshit.sharma/Downloads/train_2/driving_log.csv') as csvfile:
+  reader = csv.reader(csvfile)
+  for line in reader:
+    lines.append(line)
+for line in lines:
+  #center image
+  source_path = line[0]
+  filename = source_path.split('/')[-1]
+  current_path = '/Users/harshit.sharma/Downloads/train_2/IMG/'+filename
+  image = cv2.imread(current_path)
+  imgRGB = cv2.cvtColor(image, cv2.COLOR_RGB2HLS)
+  images.append(imgRGB)
+  measurement = float(line[3])
+  measurements.append(measurement)
+'''
 indices = [i for i, x in enumerate(measurements) if x == float(0)]
 shuffle(indices)
 print(len(indices))
@@ -88,5 +211,5 @@ model.add(Dense(84))
 model.add(Dense(1))
 
 model.compile(loss='mse',optimizer='adam')
-model.fit(X_train,y_train,validation_split=0.2,shuffle=True,nb_epoch=7)
-model.save('modelwithaug_lap4.h5')
+model.fit(X_train,y_train,validation_split=0.2,shuffle=True,nb_epoch=5)
+model.save('model_new7.h5')
